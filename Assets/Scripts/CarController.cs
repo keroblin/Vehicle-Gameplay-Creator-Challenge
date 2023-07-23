@@ -25,10 +25,26 @@ public class CarController : MonoBehaviour
         //movement
         if (inputEnabled)
         {
+            //rotation
+            Quaternion rotation = rb.rotation;
+            Vector3 euler = rotation.eulerAngles;
+            float leanMod = 0f;
+            if (Input.GetKey(KeyCode.E))
+            {
+                leanMod = -1;
+            }
+            else if (Input.GetKey(KeyCode.Q))
+            {
+                leanMod = 1;
+            }
+            euler += new Vector3(0f, 0f, leanMod * speed);
+            rotation = Quaternion.Euler(euler);
+            rb.MoveRotation(rotation);
+            
+            //main movement
             targetVelocity = Vector3.zero;
 
             float heightMod = 0f;
-
             if (Input.GetKey(KeyCode.LeftShift))
             {
                 heightMod = -1;
@@ -37,7 +53,6 @@ public class CarController : MonoBehaviour
             {
                 heightMod = 1;
             }
-            Debug.Log(heightMod);
 
             Vector3 input = new Vector3(Input.GetAxisRaw("Horizontal"), heightMod ,Input.GetAxisRaw("Vertical"));
             Vector3 movement = Vector3.zero;
@@ -46,12 +61,9 @@ public class CarController : MonoBehaviour
                 //speed = Mathf.Lerp(speed, acceleration, Time.deltaTime);
                 movement = input * (speed*Time.deltaTime);
             }
-
+            movement = transform.TransformDirection(movement);
             targetVelocity = movement + overrideVelocity;
-            //targetVelocity = direction * speed;
             rb.AddForce(targetVelocity,ForceMode.VelocityChange);
-            //rb.velocity = targetVelocity;
-            //rb.AddForce(targetVelocity);
         }
 
 
