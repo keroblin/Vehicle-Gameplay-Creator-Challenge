@@ -21,22 +21,39 @@ public class CarController : MonoBehaviour
 
     void FixedUpdate()
     {
+
+        //movement
         if (inputEnabled)
         {
             targetVelocity = Vector3.zero;
-            Vector2 input = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+
+            float heightMod = 0f;
+
+            if (Input.GetKey(KeyCode.LeftShift))
+            {
+                heightMod = -1;
+            }
+            else if (Input.GetKey(KeyCode.Space))
+            {
+                heightMod = 1;
+            }
+            Debug.Log(heightMod);
+
+            Vector3 input = new Vector3(Input.GetAxisRaw("Horizontal"), heightMod ,Input.GetAxisRaw("Vertical"));
             Vector3 movement = Vector3.zero;
             if(input.magnitude > 0) //if anything is pressed
             {
                 //speed = Mathf.Lerp(speed, acceleration, Time.deltaTime);
-                movement.x = input.x * speed;
-                movement.z = input.y * speed;
+                movement = input * (speed*Time.deltaTime);
             }
 
             targetVelocity = movement + overrideVelocity;
             //targetVelocity = direction * speed;
-            rb.velocity = targetVelocity;
+            rb.AddForce(targetVelocity,ForceMode.VelocityChange);
+            //rb.velocity = targetVelocity;
             //rb.AddForce(targetVelocity);
         }
+
+
     }
 }
