@@ -5,6 +5,7 @@ using UnityEngine;
 public class CarController : MonoBehaviour
 {
     public float acceleration;
+    public float mouseSensitivity = 14f;
     public float speed = 3f;
     public Rigidbody rb;
     public bool inputEnabled;
@@ -37,7 +38,24 @@ public class CarController : MonoBehaviour
             {
                 leanMod = 1;
             }
-            euler += new Vector3(0f, 0f, leanMod * speed);
+            euler += new Vector3(0f, 0f, leanMod * (speed*Time.deltaTime));
+            /*if(euler.z > 360)
+            {
+                euler.z = 0;
+            }
+            else if (euler.z < 0f)
+            {
+                euler.z = 360f;
+            }*/
+
+            //mouse input
+            if(Cursor.lockState != CursorLockMode.Locked)
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+            }
+            Vector2 lookAngle = new Vector2(Input.GetAxisRaw("Mouse Y") * mouseSensitivity, Input.GetAxisRaw("Mouse X") * mouseSensitivity);
+            euler.x += -lookAngle.x;
+            euler.y += lookAngle.y;
             rotation = Quaternion.Euler(euler);
             rb.MoveRotation(rotation);
             
@@ -63,9 +81,8 @@ public class CarController : MonoBehaviour
             }
             movement = transform.TransformDirection(movement);
             targetVelocity = movement + overrideVelocity;
-            rb.AddForce(targetVelocity,ForceMode.VelocityChange);
+            rb.AddForce(targetVelocity,ForceMode.Impulse);
         }
-
 
     }
 }
