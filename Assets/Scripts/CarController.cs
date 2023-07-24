@@ -38,24 +38,20 @@ public class CarController : MonoBehaviour
             {
                 leanMod = 1;
             }
-            euler += new Vector3(0f, 0f, leanMod * (speed*Time.deltaTime));
-            /*if(euler.z > 360)
-            {
-                euler.z = 0;
-            }
-            else if (euler.z < 0f)
-            {
-                euler.z = 360f;
-            }*/
-
+            euler += new Vector3(0f, 0f, leanMod * ((speed*2)*Time.deltaTime));
             //mouse input
-            if(Cursor.lockState != CursorLockMode.Locked)
+            Vector2 lookAngle;
+            if (Cursor.lockState != CursorLockMode.Locked)
             {
+                lookAngle = Vector2.zero;
+                rb.rotation = Quaternion.identity;
                 Cursor.lockState = CursorLockMode.Locked;
             }
-            Vector2 lookAngle = new Vector2(Input.GetAxisRaw("Mouse Y") * mouseSensitivity, Input.GetAxisRaw("Mouse X") * mouseSensitivity);
-            euler.x += -lookAngle.x;
+
+            lookAngle = new Vector2(Input.GetAxis("Mouse Y") * mouseSensitivity, Input.GetAxis("Mouse X") * mouseSensitivity);
+            euler.x -= lookAngle.x;
             euler.y += lookAngle.y;
+
             rotation = Quaternion.Euler(euler);
             rb.MoveRotation(rotation);
             
